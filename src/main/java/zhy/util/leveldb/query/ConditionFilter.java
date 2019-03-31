@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static zhy.util.leveldb.query.Condition.NOT_CONTAIN;
-import static zhy.util.leveldb.query.Condition.NOT_EQUAL;
+import static zhy.util.leveldb.query.Operation.EQUAL;
+import static zhy.util.leveldb.query.Operation.NOT_EQUAL;
 
 public class ConditionFilter {
     /**
@@ -27,7 +27,9 @@ public class ConditionFilter {
         Map<String, Object> map = JSON.parseObject(value);
         if (map == null) {
             //return false if any some positive condition exists.
-            return conditions.stream().map(Condition::getCondition).noneMatch(c -> c != NOT_EQUAL && c != NOT_CONTAIN);
+            return conditions.stream()
+                    .map(Condition::getCondition)
+                    .noneMatch(c -> c != NOT_EQUAL.mask() && c != Operation.NOT_CONTAIN.mask());
         }
         return conditions.stream()
                 .map(c -> c.satisfies(map))
@@ -45,7 +47,7 @@ public class ConditionFilter {
                 String name = field.getName();
                 Object value = field.get(entity);
                 if (value != null && !"id".equals(name)) {
-                    conditions.add(new Condition(name, value.toString(), Condition.EQUAL));
+                    conditions.add(new Condition(name, value.toString(), EQUAL));
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();

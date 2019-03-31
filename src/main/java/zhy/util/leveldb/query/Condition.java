@@ -3,24 +3,12 @@ package zhy.util.leveldb.query;
 import java.util.Map;
 import java.util.Objects;
 
+import static zhy.util.leveldb.query.Operation.*;
+
 /**
  * Condition of query
  */
 public class Condition {
-
-    /**
-     * Compare
-     */
-    public final static int NUMBER_NOT_LOWER = 1;
-    public final static int NUMBER_NOT_GREATER = 2;
-    public final static int NUMBER_LOWER = 4;
-    public final static int NUMBER_GREATER = 8;
-    public final static int EQUAL = 16;
-    public final static int START = 32;
-    public final static int END = 64;
-    public final static int CONTAIN = 128;
-    public final static int NOT_CONTAIN = 256;
-    public final static int NOT_EQUAL = 512;
 
     private int condition = 0;
 
@@ -28,17 +16,17 @@ public class Condition {
     private String targetValue2;
     private String targetParam;
 
-    public Condition(String targetParam, String targetValue, int... cond) {
+    public Condition(String targetParam, String targetValue, Operation... cond) {
         this.targetParam = targetParam;
         this.targetValue1 = targetValue;
-        for (int c : cond) condition |= c;
+        for (Operation operation : cond) condition |= operation.mask();
     }
 
-    public Condition(String targetParam, String targetValue1, String targetValue2, int... cond) {
+    public Condition(String targetParam, String targetValue1, String targetValue2, Operation... cond) {
         this.targetParam = targetParam;
         this.targetValue1 = targetValue1;
         this.targetValue2 = targetValue2;
-        for (int c : cond) condition |= c;
+        for (Operation operation : cond) condition |= operation.mask();
     }
 
     public boolean satisfies(Map<String, Object> map) {
@@ -105,7 +93,7 @@ public class Condition {
         return this;
     }
 
-    private boolean need(int sub) {
-        return (condition & sub) != 0;
+    private boolean need(Operation sub) {
+        return sub.need(condition);
     }
 }
