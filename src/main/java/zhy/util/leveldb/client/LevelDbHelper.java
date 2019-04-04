@@ -30,22 +30,7 @@ import java.util.Set;
 public class LevelDbHelper {
     private static final LevelDbHelper INDEX_DB = new LevelDbHelper("id_index");
     private static final String CHARSET = "UTF-8";
-    private static String FILE_ROOT;
-    private static Properties PROPERTIES = new Properties();
-
-    {
-        try {
-            PROPERTIES.load(new FileInputStream("leveldb.property"));
-            FILE_ROOT = PROPERTIES.getProperty("rootDir");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (FILE_ROOT == null) FILE_ROOT = System.getProperty("user.home/leveldb");
-    }
-
-    static {
-
-    }
+    private static String FILE_ROOT=System.getProperty("user.home")+"/.leveldb";
 
     /**
      * The name of entity to save is similar with the table name in SQL database.
