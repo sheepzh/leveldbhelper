@@ -30,7 +30,7 @@ import java.util.Set;
 public class LevelDbHelper {
     private static final LevelDbHelper INDEX_DB = new LevelDbHelper("id_index");
     private static final String CHARSET = "UTF-8";
-    private static String FILE_ROOT=System.getProperty("user.home")+"/.leveldb";
+    private static String FILE_ROOT = System.getProperty("user.home") + "/.leveldb";
 
     /**
      * The name of entity to save is similar with the table name in SQL database.
@@ -152,6 +152,18 @@ public class LevelDbHelper {
             e.printStackTrace();
         }
         autoClose(db);
+    }
+
+    /**
+     * Insert a new record.
+     *
+     * @param toInsert new record
+     * @return the primary key
+     */
+    public int put(String toInsert) {
+        int key = idNextAndIncrement();
+        putOrAdd(key, toInsert);
+        return key;
     }
 
     /**

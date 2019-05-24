@@ -1,5 +1,11 @@
 package zhy.util.leveldb.query;
 
+/**
+ * Operation of query condition.
+ *
+ * @author zhanghengyang
+ * @since 1.0
+ */
 public enum Operation {
     /**
      * Numberic condition
@@ -8,6 +14,7 @@ public enum Operation {
     NUMBER_NOT_GREATER,
     NUMBER_LOWER,
     NUMBER_GREATER,
+    NUMBER_BETWEEN,
     /**
      * String condition
      */

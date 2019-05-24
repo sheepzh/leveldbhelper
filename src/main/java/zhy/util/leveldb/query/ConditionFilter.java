@@ -11,6 +11,12 @@ import java.util.Map;
 import static zhy.util.leveldb.query.Operation.EQUAL;
 import static zhy.util.leveldb.query.Operation.NOT_EQUAL;
 
+/**
+ * Filter of conditions.
+ *
+ * @author zhanghengyang
+ * @since 1.0
+ */
 public class ConditionFilter {
     /**
      * Whether the param of value satisfies the condition list.
@@ -18,7 +24,7 @@ public class ConditionFilter {
      *
      * @param value      Value string to judge
      * @param conditions Conditions
-     * @return <code>true</code> if satisfies.
+     * @return <code>true</code> if target value satisfies all conditions in the list.
      */
     public boolean satisfies(String value, List<Condition> conditions) {
         if (conditions == null || conditions.isEmpty()) {
