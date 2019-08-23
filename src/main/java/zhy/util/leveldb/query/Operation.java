@@ -8,7 +8,7 @@ package zhy.util.leveldb.query;
  */
 public enum Operation {
     /**
-     * Numberic condition
+     * Numeric condition
      */
     NUMBER_NOT_LOWER,
     NUMBER_NOT_GREATER,

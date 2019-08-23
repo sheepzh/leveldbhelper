@@ -6,8 +6,9 @@
 
     <groupId>zhy</groupId>
     <artifactId>leveldb-helper</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
+    <description>Helper of levelDB, see https://github.com/sheepzh/leveldbhelper</description>
     <build>
         <plugins>
             <plugin>
@@ -15,7 +16,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>8</source>
-		    <target>8</target>
+                    <target>8</target>
                 </configuration>
             </plugin>
         </plugins>

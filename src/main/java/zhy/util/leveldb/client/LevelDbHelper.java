@@ -13,27 +13,27 @@ import zhy.util.leveldb.query.ConditionFilter;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Set;
 
 
 /**
- * Leveldb operation,which is not about business.
+ * LevelDB operation,which is not about business.
+ *
+ * @author zhanghengyang
  */
 public class LevelDbHelper {
-    private static final LevelDbHelper INDEX_DB = new LevelDbHelper("id_index");
+    private static final LevelDbHelper INDEX_DB = new LevelDbHelper(Index.class);
     private static final String CHARSET = "UTF-8";
-    private static String FILE_ROOT = System.getProperty("user.home") + "/.leveldb";
+    private String FILE_ROOT = "";
 
     /**
-     * The name of entity to save is similar with the table name in SQL database.
+     * The name of entity to save is similar with the table name in relational database.
      */
     private String entityName;
     /**
@@ -41,8 +41,19 @@ public class LevelDbHelper {
      */
     private ConditionFilter filter = new ConditionFilter();
 
-    public LevelDbHelper(String entityName) {
-        this.entityName = entityName;
+    /**
+     * @param entityClz   Class of entity to save
+     * @param fileRootDir The root of levelDB directory
+     */
+    public LevelDbHelper(Class entityClz, String fileRootDir) {
+        this.entityName = entityClz.getName();
+    }
+
+    /**
+     * @param entityClz Class of entity to save
+     */
+    public LevelDbHelper(Class entityClz) {
+        this(entityClz, System.getProperty("user.home") + "/.leveldb");
     }
 
     /**
@@ -75,15 +86,13 @@ public class LevelDbHelper {
      */
     public Map<String, String> find(List<Condition> conditions, int startRow, int endRow) {
         DB db = getDb();
-        Map<String, String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>(128);
 
-        //Read from a snapshot,and changed contents while reading cant be find.
+        // Read from a snapshot,and changed contents while reading cant be find.
         Snapshot snapshot = Objects.requireNonNull(db).getSnapshot();
         ReadOptions readOptions = new ReadOptions();
-        //遍历中swap出来的数据，不应该保存在memtable中。
         readOptions.fillCache(false);
         readOptions.snapshot(snapshot);
-        //默认snapshot为当前。
         DBIterator iterator = db.iterator(readOptions);
         int rowNo = 0;
         Map.Entry<byte[], byte[]> item;
@@ -119,7 +128,6 @@ public class LevelDbHelper {
      */
     public synchronized int putOrAdd(Map<Object, String> toInsert) {
         DB db = getDb();
-        //write后立即进行磁盘同步写
         WriteOptions writeOptions = new WriteOptions().sync(true);
         WriteBatch writeBatch = Objects.requireNonNull(db).createWriteBatch();
         toInsert.forEach((key, value) -> {
@@ -229,5 +237,8 @@ public class LevelDbHelper {
     public int idNext() {
         String index = INDEX_DB.get(entityName);
         return index == null ? 1 : Integer.valueOf(index) + 1;
+    }
+
+    private final class Index {
     }
 }
